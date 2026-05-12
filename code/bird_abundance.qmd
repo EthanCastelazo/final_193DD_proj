@@ -10,3 +10,46 @@ format:
          \DefineVerbatimEnvironment{OutputCode}{Verbatim}{breaklines,commandchars=\\\{\}}
 ---
 
+# Set up
+## Packages
+
+```{r}
+#| label: packages
+
+# general use
+library(tidyverse)
+library(here)
+library(janitor)
+library(snakecase)
+
+#Wrap Axis Label
+library(scales)
+
+#reading .xlsx files
+library(readxl)
+
+# visualize missing data
+library(naniar)
+
+# visualizing
+library(patchwork)
+```
+
+## Data 
+```{r}
+#| label: data
+birds <- read_csv(here("data", "birds.csv"))
+
+water <- read_csv(here("data", "venoco-water.csv"))
+
+```
+
+## counting birds
+```{r}
+
+number_of_species <- birds %>% 
+  mutate(n_species = n_distinct(species)) %>% 
+  mutate(n_groups = n_distinct(e_bird_group))
+
+```
+
