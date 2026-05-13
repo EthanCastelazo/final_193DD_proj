@@ -1,0 +1,18 @@
+---
+title: "visualization drafts"
+format: pdf
+---
+
+**Potential figure 1:**
+
+**Potential figure 2:**
+
+[delete this line and enter your figure here; if you don't have one, delete the entire section]
+
+**Potential figure 3:**
+
+[delete this line and enter your figure here; if you don't have one, delete the entire section]
+
+**Potential figure 4**
+
+[delete this line and enter your figure here; if you don't have one, delete the entire section]
