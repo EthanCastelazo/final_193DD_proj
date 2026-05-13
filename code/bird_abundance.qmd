@@ -1,6 +1,7 @@
 ---
 title: "Bird Abundance"
 author: Alex Gonzales, Ethan Castelazo, Zelda Reif
+source: editor
 format: 
   pdf:
     include-in-header: 
