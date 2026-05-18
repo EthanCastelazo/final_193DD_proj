@@ -45,12 +45,46 @@ water <- read_csv(here("data", "venoco-water.csv"))
 
 ```
 
-## counting birds
-```{r}
+## wrangling birds
 
-number_of_species <- birds %>% 
-  mutate(n_species = n_distinct(species)) %>% 
-  mutate(n_groups = n_distinct(e_bird_group))
+```{r}
+#| label: bird-wrangling
+
+
+ebirds_groups <- birds %>% 
+  # filtered data to only include bird eBird groups
+  distinct(e_bird_group)
+
+#created a new object from birds
+birds_wy2025 <- birds %>% 
+  # filter to only include observations from 2025 water year
+  # exclude repeat observations
+  # include only 4 eBird groups of interest
+  filter(observation_date > "2024-09-30" & observation_date < "2025-10-01",
+         repeat_observation == "No",
+         e_bird_group %in% c("Waterfowl",
+                             "New World Sparrows",
+                             "Herons, Ibis, and Allies",
+                             "Shorebirds")) %>% 
+  # filling in taxanomic information about order and families for eBird groups
+  mutate(lowest_group = case_when(
+    e_bird_group == "New World Sparrow" ~ "Passerellidae",
+    e_bird_group == "Herons, Ibis, and Allies" ~ "Ardeidae",
+    e_bird_group == "Shorebirds" ~ "Charadriiformes",
+    e_bird_group == "Waterfowl" ~ "Anatidae"
+  ))
+
+
+
+# creating new object from birds_wy2025
+group_species <- birds_wy2025 %>% 
+  # grouping by eBird group
+  group_by(e_bird_group) %>% 
+  # finding unique species in each group
+  distinct(species) %>% 
+  # arrange data frame by eBird group
+  arrange(e_bird_group)
+
 
 ```
 
