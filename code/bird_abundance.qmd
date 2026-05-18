@@ -56,12 +56,10 @@ ebirds_groups <- birds %>%
   distinct(e_bird_group)
 
 #created a new object from birds
-birds_wy2025 <- birds %>% 
-  # filter to only include observations from 2025 water year
+birds <- birds %>% 
   # exclude repeat observations
   # include only 4 eBird groups of interest
-  filter(observation_date > "2024-09-30" & observation_date < "2025-10-01",
-         repeat_observation == "No",
+  filter(repeat_observation == "No",
          e_bird_group %in% c("Waterfowl",
                              "New World Sparrows",
                              "Herons, Ibis, and Allies",
