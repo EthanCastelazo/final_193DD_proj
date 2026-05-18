@@ -41,7 +41,7 @@ library(patchwork)
 #| label: data
 birds <- read_csv(here("data", "birds.csv"))
 
-water <- read_csv(here("data", "venoco-water.csv"))
+venoco_water <- read_csv(here("data", "venoco-water.csv"))
 
 ```
 
@@ -56,7 +56,7 @@ ebirds_groups <- birds %>%
   distinct(e_bird_group)
 
 #created a new object from birds
-birds <- birds %>% 
+birds_grouped <- birds %>% 
   # exclude repeat observations
   # include only 4 eBird groups of interest
   filter(repeat_observation == "No",
@@ -75,14 +75,13 @@ birds <- birds %>%
 
 
 # creating new object from birds_wy2025
-group_species <- birds_wy2025 %>% 
+group_species <- birds_grouped %>% 
   # grouping by eBird group
   group_by(e_bird_group) %>% 
   # finding unique species in each group
   distinct(species) %>% 
   # arrange data frame by eBird group
   arrange(e_bird_group)
-
 
 ```
 
