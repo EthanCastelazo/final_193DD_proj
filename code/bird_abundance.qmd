@@ -84,7 +84,7 @@ group_species <- birds_wy2025 %>%
   arrange(e_bird_group)
 
 
-``
+```
 
 
 ## wrangling water
