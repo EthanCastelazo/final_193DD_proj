@@ -86,5 +86,32 @@ group_species <- birds_wy2025 %>%
   arrange(e_bird_group)
 
 
+``
+
+
+## wrangling water
+
+```{r}
+#| label: water-wrangling
+
+# Creating a new object from venoco_water
+venoco_clean <- venoco_water |> 
+  # filter to only include 2025 water year
+  filter(wy == "2025") |> 
+  # creating a new column to convert water elevation in ft to meters
+  mutate(comp_level_m = (comp_level_ft + 2.96) * 0.3048) |> 
+  # selecting columns of interest
+  select(date, comp_level_m, temperature)
+
+
+# create a new object from Venoco_clean
+venoco_daily <- venoco_clean |> 
+# group by date
+  group_by(date) |> 
+# calculate mean water level for each day
+  summarize(mean_level_m = mean(comp_level_m, na.rm = TRUE)) |> 
+# ungroup the data frame
+  ungroup()
+
 ```
 
