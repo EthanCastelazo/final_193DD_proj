@@ -51,42 +51,34 @@ venoco_water <- read_csv(here("data", "venoco-water.csv"))
 #| label: bird-wrangling
 
 
-ebirds_groups <- birds %>% 
-  # filtered data to only include bird eBird groups
-  distinct(e_bird_group) %>% 
-  # grouping by e_bird_group
-  group_by(e_bird_group) %>% 
-  # counting total number of species per group
-  summarize(num_species = sum(species))
-
 #created a new object from birds
-birds_grouped <- birds %>% 
+most_abundant_groups <- birds %>% 
   # exclude repeat observations
-  # include only 4 eBird groups of interest
-  filter(repeat_observation == "No",
+  mutate(observation_date = as.Date(observation_date, format = "%m/%d/%y")) %>% 
+  filter(observation_date > as.Date("2024-11-13") & observation_date < as.Date("2025-10-22"),
+         repeat_observation == "No",
          e_bird_group %in% c("Waterfowl",
                              "New World Sparrows",
-                             "Herons, Ibis, and Allies",
+                             "Martins and Swallows",
                              "Shorebirds")) %>% 
   # filling in taxanomic information about order and families for eBird groups
   mutate(lowest_group = case_when(
-    e_bird_group == "New World Sparrow" ~ "Passerellidae",
-    e_bird_group == "Herons, Ibis, and Allies" ~ "Ardeidae",
+    e_bird_group == "New World Sparrows" ~ "Passerellidae",
+    e_bird_group == "Martins and Swallows" ~ "Hirundinidae",
     e_bird_group == "Shorebirds" ~ "Charadriiformes",
     e_bird_group == "Waterfowl" ~ "Anatidae"
   ))
 
 
 
-# creating new object from birds_wy2025
-group_species <- birds_grouped %>% 
-  # grouping by eBird group
-  group_by(e_bird_group) %>% 
-  # finding unique species in each group
-  distinct(species) %>% 
-  # arrange data frame by eBird group
-  arrange(e_bird_group)
-
+# creating new object from most_abundant_groups
+abundant_species_counts <- most_abundant_groups %>% 
+  # grouping by speices
+  group_by(season, e_bird_group, species) %>% 
+  # calculating total counts for each species
+  summarize(total_count = sum(count)) %>% 
+  # arranging in descending order
+  arrange(-total_count)
 ```
 
 
@@ -113,6 +105,15 @@ venoco_daily <- venoco_clean |>
   summarize(mean_level_m = mean(comp_level_m, na.rm = TRUE)) |> 
 # ungroup the data frame
   ungroup()
+
+```
+
+
+## joining data frames
+
+```{r}
+#| label: joining
+
 
 ```
 
