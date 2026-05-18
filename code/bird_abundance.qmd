@@ -53,7 +53,11 @@ venoco_water <- read_csv(here("data", "venoco-water.csv"))
 
 ebirds_groups <- birds %>% 
   # filtered data to only include bird eBird groups
-  distinct(e_bird_group)
+  distinct(e_bird_group) %>% 
+  # grouping by e_bird_group
+  group_by(e_bird_group) %>% 
+  # counting total number of species per group
+  summarize(num_species = sum(species))
 
 #created a new object from birds
 birds_grouped <- birds %>% 
