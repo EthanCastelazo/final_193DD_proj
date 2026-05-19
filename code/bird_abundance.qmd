@@ -98,6 +98,24 @@ shorebird_total_count <- bird_wy2025 |>
   arrange(-total_count)
 ```
 
+## Wrangling Shorebird and Watefowl
+
+```{r}
+#| label: wrangling-shorebirds-waterfowl
+
+shorebird_waterfowl_25 <- bird_wy2025 |> 
+  #filter to only include herons, ibis and allies
+  filter(e_bird_group %in% c("Waterfowl", "Shorebirds")) |> 
+  #group by species
+  group_by(e_bird_group, observation_date) |> 
+  #calc total counts per species
+  summarize(total_count = sum(count)) |> 
+  #arrange in descending order by total counts
+  arrange(-total_count)
+
+```
+
+
 
 ## wrangling water
 
