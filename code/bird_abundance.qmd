@@ -86,7 +86,7 @@ abundant_species_counts <- most_abundant_groups %>%
 ```{r}
 #| label: shorebird-wrangling
 
-shorebird_total_count <- bird_wy2025 |> 
+shorebird_total_count <- most_abundant_groups |> 
   #filter to only include herons, ibis and allies
   filter(lowest_group == "Charadriiformes") |> 
   #group by species
