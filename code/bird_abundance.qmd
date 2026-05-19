@@ -52,7 +52,7 @@ venoco_water <- read_csv(here("data", "venoco-water.csv"))
 
 
 #created a new object from birds
-most_abundant_groups <- birds %>% 
+bird_wy2025 <- birds %>% 
   # exclude repeat observations
   mutate(observation_date = as.Date(observation_date, format = "%m/%d/%y")) %>% 
   filter(observation_date > as.Date("2024-11-13") & observation_date < as.Date("2025-10-22"),
@@ -151,7 +151,7 @@ ggplot(data = shorebird_total_count,
   geom_col() +
   # taking out the legend
   theme(legend.position = "none") +
-  #relabellinf x and y axes, adding title
+  #relabelling x and y axes, adding title
   labs(x = "Species",
        y = "Total Count",
        title = "Shorebirds in 2025 Water Year")
