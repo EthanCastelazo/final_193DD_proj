@@ -73,7 +73,7 @@ bird_wy2025 <- birds %>%
 
 
 # creating new object from most_abundant_groups
-abundant_species_counts <- most_abundant_groups %>% 
+abundant_species_counts <- bird_wy2025 %>% 
   # grouping by speices
   group_by(season, e_bird_group, species) %>% 
   # calculating total counts for each species
