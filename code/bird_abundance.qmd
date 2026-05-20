@@ -22,6 +22,7 @@ library(tidyverse)
 library(here)
 library(janitor)
 library(snakecase)
+library(dplyr)
 
 #Wrap Axis Label
 library(scales)
@@ -53,7 +54,7 @@ venoco_water <- read_csv(here("data", "venoco-water.csv"))
 
 
 #created a new object from birds
-most_abundant_groups <- birds %>% 
+bird_wy2025 <- birds %>% 
   # exclude repeat observations
   mutate(observation_date = as.Date(observation_date, format = "%m/%d/%y")) %>% 
   filter(observation_date > as.Date("2024-11-13") & observation_date < as.Date("2025-10-22"),
@@ -73,7 +74,7 @@ most_abundant_groups <- birds %>%
 
 
 # creating new object from most_abundant_groups
-abundant_species_counts <- most_abundant_groups %>% 
+abundant_species_counts <- bird_wy2025 %>% 
   # grouping by speices
   group_by(season, e_bird_group, species) %>% 
   # calculating total counts for each species
@@ -81,6 +82,40 @@ abundant_species_counts <- most_abundant_groups %>%
   # arranging in descending order
   arrange(-total_count)
 ```
+
+## shorebird wrangling
+
+```{r}
+#| label: shorebird-wrangling
+
+shorebird_total_count <- bird_wy2025 |> 
+  #filter to only include herons, ibis and allies
+  filter(lowest_group == "Charadriiformes") |> 
+  #group by species
+  group_by(species) |> 
+  #calc total counts per species
+  summarize(total_count = sum(count)) |> 
+  #arrange in descending order by total counts
+  arrange(-total_count)
+```
+
+## Wrangling Shorebird and Watefowl
+
+```{r}
+#| label: wrangling-shorebirds-waterfowl
+
+shorebird_waterfowl_25 <- bird_wy2025 |> 
+  #filter to only include herons, ibis and allies
+  filter(e_bird_group %in% c("Waterfowl", "Shorebirds")) |> 
+  #group by species
+  group_by(e_bird_group, observation_date) |> 
+  #calc total counts per species
+  summarize(total_count = sum(count)) |> 
+  #arrange in descending order by total counts
+  arrange(-total_count)
+
+```
+
 
 
 ## wrangling water
@@ -116,5 +151,29 @@ venoco_daily <- venoco_clean |>
 #| label: joining
 
 
+
+```
+
+
+## plotting birds
+
+```{r}
+#| label: shorebird-species-count-plot
+
+ggplot(data = shorebird_total_count,
+       # x axis is species in descending order of total count
+       # # y axis is total count
+       # filling columns by species
+       mapping = aes(x = reorder(species, -total_count),
+                     y = total_count,
+                     fill = species)) + 
+  #first layer: column to represent counts
+  geom_col() +
+  # taking out the legend
+  theme(legend.position = "none") +
+  #relabelling x and y axes, adding title
+  labs(x = "Species",
+       y = "Total Count",
+       title = "Shorebirds in 2025 Water Year")
 ```
 
