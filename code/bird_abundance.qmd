@@ -9,13 +9,18 @@ format:
          \usepackage{fvextra}
          \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
          \DefineVerbatimEnvironment{OutputCode}{Verbatim}{breaklines,commandchars=\\\{\}}
+execute: 
+  message: false
+  warning: false
 ---
 
-# Set up
+# 1. Set up
+
 ## Packages
 
 ```{r}
 #| label: packages
+#| message: false
 
 # general use
 library(tidyverse)
@@ -35,6 +40,9 @@ library(naniar)
 
 # visualizing
 library(patchwork)
+library(flextable)
+library(ggridges)
+library(NatParksPalettes)
 ```
 
 
@@ -47,7 +55,9 @@ venoco_water <- read_csv(here("data", "venoco-water.csv"))
 
 ```
 
-## wrangling birds
+# 2. Cleaning
+
+## Wrangling birds
 
 ```{r}
 #| label: bird-wrangling
@@ -83,42 +93,7 @@ abundant_species_counts <- bird_wy2025 %>%
   arrange(-total_count)
 ```
 
-## shorebird wrangling
-
-```{r}
-#| label: shorebird-wrangling
-
-shorebird_total_count <- bird_wy2025 |> 
-  #filter to only include herons, ibis and allies
-  filter(lowest_group == "Charadriiformes") |> 
-  #group by species
-  group_by(species) |> 
-  #calc total counts per species
-  summarize(total_count = sum(count)) |> 
-  #arrange in descending order by total counts
-  arrange(-total_count)
-```
-
-## Wrangling Shorebird and Watefowl
-
-```{r}
-#| label: wrangling-shorebirds-waterfowl
-
-shorebird_waterfowl_25 <- bird_wy2025 |> 
-  #filter to only include herons, ibis and allies
-  filter(e_bird_group %in% c("Waterfowl", "Shorebirds")) |> 
-  #group by species
-  group_by(e_bird_group, observation_date) |> 
-  #calc total counts per species
-  summarize(total_count = sum(count)) |> 
-  #arrange in descending order by total counts
-  arrange(-total_count)
-
-```
-
-
-
-## wrangling water
+## Wrangling Water
 
 ```{r}
 #| label: water-wrangling
@@ -144,22 +119,49 @@ venoco_daily <- venoco_clean |>
 
 ```
 
-
-## joining data frames
+## Shorebird Wrangling
 
 ```{r}
-#| label: joining
+#| label: shorebird-wrangling
 
-
-
+shorebird_total_count <- bird_wy2025 |> 
+  #filter to only include herons, ibis and allies
+  filter(lowest_group == "Charadriiformes") |> 
+  #group by species
+  group_by(species) |> 
+  #calc total counts per species
+  summarize(total_count = sum(count)) |> 
+  #arrange in descending order by total counts
+  arrange(-total_count)
 ```
 
+## Wrangling Shorebird and Waterfowl
 
-## plotting birds
+```{r}
+#| label: wrangling-shorebirds-waterfowl
+
+shorebird_waterfowl_25 <- bird_wy2025 |> 
+  #filter to only include herons, ibis and allies
+  filter(e_bird_group %in% c("Waterfowl", "Shorebirds")) |> 
+  #group by species
+  group_by(e_bird_group, observation_date) |> 
+  #calc total counts per species
+  summarize(total_count = sum(count)) |> 
+  ungroup() |> 
+  left_join(venoco_daily,
+  # naming shared columns between both data frames
+  by = c("observation_date" = "date"))
+```
+
+# 3. Exploring Visualizations
+
+## Plotting Shorebirds
 
 ```{r}
 #| label: shorebird-species-count-plot
-
+#| fig-height: 4
+#| fig-width: 10
+#| 
 ggplot(data = shorebird_total_count,
        # x axis is species in descending order of total count
        # # y axis is total count
@@ -174,6 +176,30 @@ ggplot(data = shorebird_total_count,
   #relabelling x and y axes, adding title
   labs(x = "Species",
        y = "Total Count",
-       title = "Shorebirds in 2025 Water Year")
+       title = "Shorebirds in 2025 Water Year") +
+  scale_x_discrete(labels = ~ str_wrap(., width = 10))
+
+```
+
+## Plotting Shorebirds and Waterfowl counts over different Water Elevations
+
+```{r}
+#| label: Shorebird-waterfowl-plotting
+#| fig-height: 4
+#| fig-width: 10
+
+ggplot(data = shorebird_waterfowl_25,
+       mapping = aes(x = mean_level_m,
+                     y = total_count,
+                     color = e_bird_group)) +
+  geom_point() +
+  geom_line() +
+  theme_bw() +
+  scale_color_manual(values = natparks.pals("Yellowstone")) +
+   labs(x = "Venoco Bridge Water Elevation (meters)",
+       y = "Bird Count",
+       color = "Taxonomic Group",
+       title = "Water Elevation affects on Shorebirds and Waterfowl in Water Year 2025")
+  
 ```
 
