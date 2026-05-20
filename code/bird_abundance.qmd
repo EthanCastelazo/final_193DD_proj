@@ -14,7 +14,8 @@ execute:
   warning: false
 ---
 
-# Set up
+# 1. Set up
+
 ## Packages
 
 ```{r}
@@ -52,6 +53,8 @@ birds <- read_csv(here("data", "birds.csv"))
 venoco_water <- read_csv(here("data", "venoco-water.csv"))
 
 ```
+
+# 2. Cleaning
 
 ## Wrangling birds
 
@@ -149,6 +152,8 @@ shorebird_waterfowl_25 <- bird_wy2025 |>
   by = c("observation_date" = "date"))
 ```
 
+# 3. Exploring Visualizations
+
 ## Plotting Shorebirds
 
 ```{r}
@@ -170,8 +175,12 @@ ggplot(data = shorebird_total_count,
   #relabelling x and y axes, adding title
   labs(x = "Species",
        y = "Total Count",
-       title = "Shorebirds in 2025 Water Year")
+       title = "Shorebirds in 2025 Water Year") +
+  scale_x_discrete(labels = ~ str_wrap(., width = 10))
+
 ```
+
+## Plotting Shorebirds and Waterfowl counts over different Water Elevations
 
 ```{r}
 #| label: Shorebird-waterfowl-plotting
