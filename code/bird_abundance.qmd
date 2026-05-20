@@ -192,7 +192,6 @@ ggplot(data = shorebird_waterfowl_25,
                      y = total_count,
                      color = e_bird_group)) +
   geom_point() +
-  geom_line() +
   theme_bw() +
   scale_color_manual(values = natparks.pals("Yellowstone")) +
    labs(x = "Venoco Bridge Water Elevation (meters)",
