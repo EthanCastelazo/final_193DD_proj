@@ -236,7 +236,8 @@ ggplot(data = shorebird_waterfowl_25,
 ### Plan for making progress in the next two weeks
 
 - Gather resources for information on most abundant species within the shorebird and Waterfowl taxonomic groups 
-  - [ViewPDF]() 
+  - [KilldeerPDF](https://github.com/EthanCastelazo/final_193DD_proj/blob/main/code/citations/LHA_B158.pdf) 
+  - 
 - Draft small 'blurb' descriptions for each species to accompany illustrations
 - Complete illustrations
 - Compile illustrations and written text into formatted pamphlet to be printed
