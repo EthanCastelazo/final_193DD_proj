@@ -43,6 +43,7 @@ library(patchwork)
 library(flextable)
 library(ggridges)
 library(NatParksPalettes)
+library(paletteer)
 ```
 
 ## Data 
@@ -53,6 +54,23 @@ birds <- read_csv(here("data", "birds.csv"))
 venoco_water <- read_csv(here("data", "venoco-water.csv"))
 
 ```
+
+
+# Topic information and question
+
+**Topic:**
+
+Overall variation in bird species abundance by season based on water elevation, and variation in species abundance by season between taxonomic groups.
+
+**Question(s):**
+
+- How does water elevation effect bird species abundance within the Waterfowl and Shorebird taxonomic groups across seasons?
+
+## Ideas for analysis and backround
+
+- Plot showing total shorebird counts by species in 2025 water year
+- 
+
 
 # 2. Cleaning
 
@@ -154,17 +172,6 @@ shorebird_waterfowl_25 <- bird_wy2025 |>
 
 # 3. Exploring Visualizations
 
-### Topic information and question
-
-**Topic:**
-
-Overall variation in bird species abundance by season based on water elevation, and variation in species abundance by season between taxonomic groups.
-
-**Question(s):**
-
-- How does water elevation effect bird species abundance within the Waterfowl and Shorebird taxonomic groups across seasons?
-
-
 ## Plotting Shorebirds
 
 ```{r}
@@ -186,12 +193,11 @@ ggplot(data = shorebird_total_count,
   #relabelling x and y axes, adding title
   labs(x = "Species",
        y = "Total Count",
-       title = "Shorebirds in 2025 Water Year") +
+       title = "Shorebirds at NCOS in 2025 Water Year") +
   scale_x_discrete(labels = ~ str_wrap(., width = 10))
 
 ```
 
-### Ideas for analysis and backround
 
 ## Plotting Shorebirds and Waterfowl counts over different Water Elevations
 
@@ -201,20 +207,24 @@ ggplot(data = shorebird_total_count,
 #| fig-width: 10
 
 ggplot(data = shorebird_waterfowl_25,
-       mapping = aes(x = mean_level_m,
-                     y = total_count,
-                     color = e_bird_group)) +
+       aes(x = mean_level_m,
+           y = total_count,
+           color = e_bird_group)) +
+  # setting point geometry
   geom_point() +
+  # changing background theme
   theme_bw() +
-  scale_color_manual(values = natparks.pals("Yellowstone")) +
-   labs(x = "Venoco Bridge Water Elevation (meters)",
-       y = "Bird Count",
-       color = "Taxonomic Group",
-       title = "Water Elevation affects on Shorebirds and Waterfowl in Water Year 2025")
+  # custom colors
+  scale_color_paletteer_d("nationalparkcolors::DeathValley") +
+  # Adding axis titles, title and legend
+  labs(
+    x = "Venoco Bridge Water Elevation (meters)",
+    y = "Bird Count",
+    color = "Taxonomic Group",
+    title = "Water Elevation Effects on Shorebirds and Waterfowl in Water Year 2025"
+  )
   
 ```
-
-### Ideas for analysis and backround
 
 # Elective Planning 
 
