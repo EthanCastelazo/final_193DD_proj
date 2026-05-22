@@ -228,5 +228,17 @@ ggplot(data = shorebird_waterfowl_25,
 
 # Elective Planning 
 
-- should include some description/image of drafts
-- should include plan for making progress in the next two weeks
+## Idea: Illustrated informational bird species pamphlet for bird watchers, with insights on seasonal species abundance trends and ecological significance.
+
+### Drafts description/image 
+
+
+### Plan for making progress in the next two weeks
+
+- Gather resources for information on most abundant species within the shorebird and Waterfowl taxonomic groups 
+  - [ViewPDF]() 
+- Draft small 'blurb' descriptions for each species to accompany illustrations
+- Complete illustrations
+- Compile illustrations and written text into formatted pamphlet to be printed
+
+
