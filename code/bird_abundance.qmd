@@ -154,6 +154,17 @@ shorebird_waterfowl_25 <- bird_wy2025 |>
 
 # 3. Exploring Visualizations
 
+### Topic information and question
+
+**Topic:**
+
+Overall variation in bird species abundance by season based on water elevation, and variation in species abundance by season between taxonomic groups.
+
+**Question(s):**
+
+- How does water elevation effect bird species abundance within the Waterfowl and Shorebird taxonomic groups across seasons?
+
+
 ## Plotting Shorebirds
 
 ```{r}
