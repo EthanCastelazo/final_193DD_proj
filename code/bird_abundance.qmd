@@ -69,7 +69,9 @@ Overall variation in bird species abundance by season based on water elevation, 
 ## Ideas for analysis and backround
 
 - Plot showing total shorebird counts by species in 2025 water year
-- 
+- Plot showing total waterfowl counts by species in 2025 water year
+- Plot showing trends in water elevation by date in 2025 water year
+- Plot showing waterfowl and shorebird species counts across water elevations in 2025 water year 
 
 
 # 2. Cleaning
@@ -152,6 +154,22 @@ shorebird_total_count <- bird_wy2025 |>
   arrange(-total_count)
 ```
 
+## Waterfowl Wrangling
+
+```{r}
+#| label: waterfowl-wrangling
+
+waterfowl_total_count <- bird_wy2025 |> 
+  #filter to only include herons, ibis and allies
+  filter(lowest_group == "Anatidae") |> 
+  #group by species
+  group_by(species) |> 
+  #calc total counts per species
+  summarize(total_count = sum(count)) |> 
+  #arrange in descending order by total counts
+  arrange(-total_count)
+```
+
 ## Wrangling Shorebird and Waterfowl
 
 ```{r}
@@ -198,6 +216,32 @@ ggplot(data = shorebird_total_count,
 
 ```
 
+## Plotting Waterfowl
+
+```{r}
+#| label: waterfowl-species-count-plot
+#| fig-height: 4
+#| fig-width: 10
+#| 
+ggplot(data = waterfowl_total_count,
+       # x axis is species in descending order of total count
+       # # y axis is total count
+       # filling columns by species
+       mapping = aes(x = reorder(species, -total_count),
+                     y = total_count,
+                     fill = species)) + 
+  #first layer: column to represent counts
+  geom_col() +
+  # taking out the legend
+  theme(legend.position = "none") +
+  #relabelling x and y axes, adding title
+  labs(x = "Species",
+       y = "Total Count",
+       title = "Waterfowl at NCOS in 2025 Water Year") +
+  scale_x_discrete(labels = ~ str_wrap(., width = 10))
+
+```
+
 
 ## Plotting Shorebirds and Waterfowl counts over different Water Elevations
 
@@ -221,8 +265,7 @@ ggplot(data = shorebird_waterfowl_25,
     x = "Venoco Bridge Water Elevation (meters)",
     y = "Bird Count",
     color = "Taxonomic Group",
-    title = "Water Elevation Effects on Shorebirds and Waterfowl in Water Year 2025"
-  )
+    title = "Water Elevation Effects on Shorebirds and Waterfowl in Water Year 2025")
   
 ```
 
@@ -237,7 +280,7 @@ ggplot(data = shorebird_waterfowl_25,
 
 - Gather resources for information on most abundant species within the shorebird and Waterfowl taxonomic groups 
   - [KilldeerPDF](https://github.com/EthanCastelazo/final_193DD_proj/blob/main/code/citations/LHA_B158.pdf) 
-  - 
+  - [LeastSandpiperPDF](https://github.com/EthanCastelazo/final_193DD_proj/blob/main/code/citations/LHA_B185.pdf)
 - Draft small 'blurb' descriptions for each species to accompany illustrations
 - Complete illustrations
 - Compile illustrations and written text into formatted pamphlet to be printed
