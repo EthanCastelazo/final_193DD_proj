@@ -180,6 +180,8 @@ ggplot(data = shorebird_total_count,
 
 ```
 
+### Ideas for analysis and backround
+
 ## Plotting Shorebirds and Waterfowl counts over different Water Elevations
 
 ```{r}
@@ -201,3 +203,9 @@ ggplot(data = shorebird_waterfowl_25,
   
 ```
 
+### Ideas for analysis and backround
+
+# Elective Planning 
+
+- should include some description/image of drafts
+- should include plan for making progress in the next two weeks
