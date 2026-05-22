@@ -275,6 +275,7 @@ ggplot(data = shorebird_waterfowl_25,
 
 ### Drafts description/image 
 
+[ElectivePlanPDF](https://github.com/EthanCastelazo/final_193DD_proj/blob/main/code/datavisualization/Untitled_Artwork.pdf)
 
 ### Plan for making progress in the next two weeks
 
