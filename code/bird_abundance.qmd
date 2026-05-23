@@ -67,6 +67,8 @@ Overall variation in bird species abundance by season based on water elevation, 
 
 - How does water elevation effect bird species abundance within the Waterfowl and Shorebird taxonomic groups across seasons?
 
+**Addressing Rubric Feedback**: focusing on one, more specific, research question as opposed to three similar questions.
+
 ## Ideas for analysis and backround
 
 - Plot showing total shorebird counts by species in 2025 water year
@@ -269,6 +271,9 @@ ggplot(data = shorebird_waterfowl_25,
     title = "Water Elevation Effects on Shorebirds and Waterfowl in Water Year 2025")
   
 ```
+
+**Addressing Rubric Feedback**: water elevation is plotted with abundance using a scatter plot rather than a bar chart. Additionally, we are now comparing our response variable across bird groups instead of isolating their patterns.
+
 
 # Elective Planning 
 
