@@ -245,6 +245,33 @@ ggplot(data = waterfowl_total_count,
 
 ```
 
+## Plotting Water Elevation of Time 2025
+
+```{r}
+#| label: Venoco-water-elevation
+#| fig-height: 4
+#| fig-width: 10
+#| 
+ggplot(data = venoco_daily,
+       # x axis is species in descending order of total count
+       # # y axis is total count
+       # filling columns by species
+       mapping = aes(x = date,
+                     y = mean_level_m)) + 
+  #first layer: column to represent counts
+  geom_point() +
+  # adding line
+  geom_line() +
+  # custom theme
+  theme_bw() +
+  # taking out the legend
+  theme(legend.position = "none") +
+  #relabelling x and y axes, adding title
+  labs(x = "Date",
+       y = "Mean Water Level (meter)",
+       title = "Water Elevation through 2025") 
+  #scale_x_discrete(labels = ~ str_wrap(., width = 10))
+```
 
 ## Plotting Shorebirds and Waterfowl counts over different Water Elevations
 
