@@ -70,6 +70,8 @@ library(flextable)
 library(ggridges)
 library(NatParksPalettes)
 library(paletteer)
+library(ggrepel)
+library(cowplot)
 ```
 
 
@@ -267,6 +269,18 @@ ggplot(data = venoco_daily,
   geom_point() +
   # adding line
   geom_line() +
+  # adjusting appearance of x-axis
+  scale_x_date(
+    # setting limits (no upper bound)
+    limits = c(as_date("2024-10-01"), NA),
+    # setting breaks so that date labels appear every month
+    breaks = as_date(c("2024-10-01", "2024-11-01", "2024-12-01",
+                       "2025-01-01", "2025-02-01", "2025-03-01",
+                       "2025-04-01", "2025-05-01", "2025-06-01",
+                       "2025-07-01", "2025-08-01", "2025-09-01")),
+    # label dates with month abbreviations
+    date_labels = "%b") +
+   scale_y_continuous(expand = expansion(mult = c(0.01, 0.1))) +
   # custom theme
   theme_bw() +
   # taking out the legend
@@ -274,8 +288,31 @@ ggplot(data = venoco_daily,
   #relabelling x and y axes, adding title
   labs(x = "Date",
        y = "Mean Water Level (meter)",
-       title = "Water Elevation through 2025") 
-  #scale_x_discrete(labels = ~ str_wrap(., width = 10))
+       title = "Water Elevation through 2025") +
+  # add vertical line for major rain event in January
+  geom_vline(xintercept = as_date("2025-01-26"),
+             linetype = "dashed") +
+  # text label (from cowplot package)
+  draw_label("First major rain event\n(3.40 in)",
+             # x- and y-axis position
+             x = as_date("2025-01-20"),   
+             y = 2.6,
+             # right alignment
+             hjust = 1,
+             # text size
+             size = 10) +
+  # add vertical line for major rain event in March
+  geom_vline(xintercept = as_date("2025-03-12"),
+             linetype = "dashed") +
+  # text label
+  draw_label("Last major rain event\n(1.11 in)",
+             # x- and y-axis position
+             x = as_date("2025-03-17"),   
+             y = 2.6,
+             # left alignment
+             hjust = 0,
+             # text size
+             size = 10)
 ```
 
 ### Plotting Shorebirds and Waterfowl counts over different Water Elevations
