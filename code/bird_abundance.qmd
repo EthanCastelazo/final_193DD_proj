@@ -14,9 +14,35 @@ execute:
   warning: false
 ---
 
-# 1. Set up
+# Topic, Reserach Questions, and Ideas for Analysis
 
-## Packages
+**Topic:**
+
+The topic we seek to investigate is the overall variation in bird species abundance by season based on water elevation, and variation in species abundance by season between taxonomic groups.
+
+**Question(s):**
+
+- How does water elevation effect bird species abundance within the Waterfowl and Shorebird taxonomic groups across seasons?
+**Addressing Rubric Feedback**: focusing on one, more specific, research question as opposed to three similar questions.
+
+**Ideas for analysis and background**
+
+- Plot showing total shorebird counts by species in 2025 water year
+- Plot showing total waterfowl counts by species in 2025 water year
+- Plot showing trends in water elevation by date in 2025 water year
+- Plot showing waterfowl and shorebird species counts across water elevations in 2025 water year, 1 plot for wy 2025, 4 faceted plots by season.
+
+
+# Background
+
+
+
+# Visualizations
+
+
+## 1. Set up
+
+### Packages
 
 ```{r}
 #| label: packages
@@ -47,7 +73,7 @@ library(paletteer)
 ```
 
 
-## Data 
+### Data 
 ```{r}
 #| label: data
 birds <- read_csv(here("data", "birds.csv"))
@@ -56,30 +82,9 @@ venoco_water <- read_csv(here("data", "venoco-water.csv"))
 
 ```
 
+## 2. Cleaning
 
-# Topic information and question
-
-**Topic:**
-
-Overall variation in bird species abundance by season based on water elevation, and variation in species abundance by season between taxonomic groups.
-
-**Question(s):**
-
-- How does water elevation effect bird species abundance within the Waterfowl and Shorebird taxonomic groups across seasons?
-
-**Addressing Rubric Feedback**: focusing on one, more specific, research question as opposed to three similar questions.
-
-## Ideas for analysis and backround
-
-- Plot showing total shorebird counts by species in 2025 water year
-- Plot showing total waterfowl counts by species in 2025 water year
-- Plot showing trends in water elevation by date in 2025 water year
-- Plot showing waterfowl and shorebird species counts across water elevations in 2025 water year 
-
-
-# 2. Cleaning
-
-## Wrangling birds
+### Wrangling birds
 
 ```{r}
 #| label: bird-wrangling
@@ -115,7 +120,7 @@ abundant_species_counts <- bird_wy2025 %>%
   arrange(-total_count)
 ```
 
-## Wrangling Water
+### Wrangling Water
 
 ```{r}
 #| label: water-wrangling
@@ -141,7 +146,7 @@ venoco_daily <- venoco_clean |>
 
 ```
 
-## Shorebird Wrangling
+### Shorebird Wrangling
 
 ```{r}
 #| label: shorebird-wrangling
@@ -157,7 +162,7 @@ shorebird_total_count <- bird_wy2025 |>
   arrange(-total_count)
 ```
 
-## Waterfowl Wrangling
+### Waterfowl Wrangling
 
 ```{r}
 #| label: waterfowl-wrangling
@@ -173,7 +178,7 @@ waterfowl_total_count <- bird_wy2025 |>
   arrange(-total_count)
 ```
 
-## Wrangling Shorebird and Waterfowl
+### Wrangling Shorebird and Waterfowl
 
 ```{r}
 #| label: wrangling-shorebirds-waterfowl
@@ -191,9 +196,9 @@ shorebird_waterfowl_25 <- bird_wy2025 |>
   by = c("observation_date" = "date"))
 ```
 
-# 3. Exploring Visualizations
+## 3. Exploring Visualizations
 
-## Plotting Shorebirds
+### Plotting Shorebirds
 
 ```{r}
 #| label: shorebird-species-count-plot
@@ -219,7 +224,7 @@ ggplot(data = shorebird_total_count,
 
 ```
 
-## Plotting Waterfowl
+### Plotting Waterfowl
 
 ```{r}
 #| label: waterfowl-species-count-plot
@@ -245,7 +250,7 @@ ggplot(data = waterfowl_total_count,
 
 ```
 
-## Plotting Water Elevation of Time 2025
+### Plotting Water Elevation of Time 2025
 
 ```{r}
 #| label: Venoco-water-elevation
@@ -273,7 +278,7 @@ ggplot(data = venoco_daily,
   #scale_x_discrete(labels = ~ str_wrap(., width = 10))
 ```
 
-## Plotting Shorebirds and Waterfowl counts over different Water Elevations
+### Plotting Shorebirds and Waterfowl counts over different Water Elevations
 
 ```{r}
 #| label: Shorebird-waterfowl-plotting
@@ -302,9 +307,9 @@ ggplot(data = shorebird_waterfowl_25,
 **Addressing Rubric Feedback**: water elevation is plotted with abundance using a scatter plot rather than a bar chart. Additionally, we are now comparing our response variable across bird groups instead of isolating their patterns.
 
 
-# Elective Planning 
+## Elective Planning 
 
-## Idea: Illustrated informational bird species pamphlet for bird watchers, with insights on seasonal species abundance trends and ecological significance.
+**Idea:** Illustrated informational bird species pamphlet for bird watchers, with insights on seasonal species abundance trends and ecological significance.
 
 ### Drafts description/image 
 
