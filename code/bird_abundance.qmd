@@ -23,7 +23,7 @@ The topic we seek to investigate is the overall variation in bird species abunda
 **Question(s):**
 
 - How does water elevation effect bird species abundance within the Waterfowl and Shorebird taxonomic groups across seasons?
-**Addressing Rubric Feedback**: focusing on one, more specific, research question as opposed to three similar questions.
+
 
 **Ideas for analysis and background**
 
@@ -33,11 +33,16 @@ The topic we seek to investigate is the overall variation in bird species abunda
 - Plot showing waterfowl and shorebird species counts across water elevations in 2025 water year, 1 plot for wy 2025, 4 faceted plots by season.
 - Pearson Correlation Test for both Shorebirds and Waterfowl and their relationship to water level
 
+
+**These background paragraphs address the rubric feedback which stated we were lacking sufficient background information.**
+
 According to the [NCOS Restoration Project Plan](https://www.ncos.ccber.ucsb.edu/sites/default/files/docs/Final_Restoration_Plan_NCOS_2016_1221.pdf), “restored intertidal habitat… will provide foraging areas for migratory shorebirds and wading birds”. Additionally, “Dabbling ducks, geese and diving ducks will be supported by deeper sub-tidal areas and lower elevation (more frequently inundated) mudflat areas”. Variation in water levels throughout a given water year likely has a direct influence on the degree to which these benefits are realized by various bird groups.
 
 Understanding more about the relationship between water elevation in a system and the bird species which that system supports can be useful for future wetland restoration projects. According to the [State of California Water Quality Monitoring Council](https://mywaterquality.ca.gov/wetland-monitoring/where-are-wetlands.html), California has lost over 90% of its historic wetlands. Insights gleaned from this study at NCOS can be applied to similar wetland restoration designs in California, addressing this stark erasure of wetland habitats across the state.
 
 We want to analyze the behavior of bird species found at NCOS to assess the effectiveness of the restoration project and to inform the decisions made in future projects. To do so, we as scientists must consider all the environmental factors that may significantly contribute to the birds’ behavioral tendencies, and one variable included in such environmental factors is water elevation. Water level has been shown to have a direct impact on the availability of beneficial forage plants and invertebrate abundance [(Brand et al, 2014)](https://bioone.org/journals/waterbirds/volume-37/issue-1/063.037.0108/Effects-of-Wetland-Management-on-Carrying-Capacity-of-Diving-Ducks/10.1675/063.037.0108.full).
+
+**This paragraph addresses the rubric feedback which stated we were missing a coded correlation test.** 
 
 At the end of the Wrangling section of this document on page 6 is a a Pearson Correlation Test that determines the correlation between Shorebird Abundance and Water Elevation in Water Year 2025. The correlation coefficient that is returned from this test is -0.445, indicating a moderate negative relationship between the two variables and suggesting that there is in fact a trend worth investigating.
 
