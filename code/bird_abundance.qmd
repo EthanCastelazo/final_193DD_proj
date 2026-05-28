@@ -432,6 +432,8 @@ ggplot(data = shorebird_waterfowl_25,
 
 ## Elective Planning 
 
+**Edits to these plans address the rubric feedback which stated we were lacking sufficient information on the specific spp we would include.**
+
 **Idea:** Illustrated informational bird species pamphlet for bird watchers, with insights on seasonal species abundance trends and ecological significance.
 
 ### Drafts description/image 
