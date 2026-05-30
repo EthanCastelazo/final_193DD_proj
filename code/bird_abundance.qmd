@@ -14,7 +14,7 @@ execute:
   warning: false
 ---
 
-# Topic, Reserach Questions, and Ideas for Analysis
+# Topic, Research Questions, and Ideas for Analysis
 
 **Topic:**
 
@@ -93,6 +93,32 @@ venoco_water <- read_csv(here("data", "venoco-water.csv"))
 
 ```
 
+```{r}
+#| label: plot-aesthetics
+
+colors <- c(
+  "#0077BB",
+  "#33BBEE",
+  "#009988",
+  "#EE7733",
+  "#CC3311",
+  "#EE3377",
+  "#AA4499",
+  "#AA4",
+  "#374890",
+  "#33B458",
+  "#009",
+  "#EE7",
+  "#CC5869"
+  
+)
+
+theme_set(
+  theme_bw() +
+    theme(text = element_text(size = 14))
+)
+```
+
 ## 2. Cleaning
 
 ### Wrangling birds
@@ -129,6 +155,57 @@ abundant_species_counts <- bird_wy2025 %>%
   summarize(total_count = sum(count)) %>% 
   # arranging in descending order
   arrange(-total_count)
+```
+
+
+### Wrangling Waterfowl Species
+
+```{r}
+#| label: wrangling-all-waterfowl
+
+# creating new object from birds
+ waterfowl_species<- bird_wy2025 |> 
+  # filter to only include shorebords and observations in 2025 water year
+  filter(e_bird_group == "Waterfowl") |> 
+  # calculate total counts per species for a survey
+  group_by(observation_date, species) |> 
+  summarize(total = sum(count)) |> 
+  ungroup() |> 
+  # fill in any missing observation date and species combinations with 0
+  complete(observation_date, species,
+           fill = list(total = 0)) |> 
+  # add a column to direct label lines
+  group_by(species) |> 
+  mutate(species_label = case_when(
+    observation_date == min(observation_date) ~ species
+  )) |> 
+  ungroup() |> 
+  mutate(species = fct_reorder(species, total, .fun = median, .desc = TRUE))
+```
+
+### Wrangling Shorebird Species
+
+```{r}
+#| label: wrangling-all-shorebird
+
+# creating new object from birds
+ shorebird_species<- bird_wy2025 |> 
+  # filter to only include shorebords and observations in 2025 water year
+  filter(e_bird_group == "Shorebirds") |> 
+  # calculate total counts per species for a survey
+  group_by(observation_date, species) |> 
+  summarize(total = sum(count)) |> 
+  ungroup() |> 
+  # fill in any missing observation date and species combinations with 0
+  complete(observation_date, species,
+           fill = list(total = 0)) |> 
+  # add a column to direct label lines
+  group_by(species) |> 
+  mutate(species_label = case_when(
+    observation_date == min(observation_date) ~ species
+  )) |> 
+  ungroup() |> 
+  mutate(species = fct_reorder(species, total, .fun = median, .desc = TRUE))
 ```
 
 ### Wrangling Water
@@ -337,6 +414,122 @@ ggplot(data = venoco_daily,
              size = 10)
 ```
 
+**Addressing Rubric Feedback**: Created a water elevation through time plot to add context to bird abundance counts. Additionally, we added major rain events to explain spikes and falls in the graph.
+
+### Plotting Waterfowl Species through 2025 Water Year
+
+```{r}
+#| label: waterfowl-highlights
+#| fig-width: 11
+#| fig-height: 8
+
+# creating new data frame for highlighted plot
+waterfowl_highlight <- waterfowl_species |> 
+  # creating new column that is a duplicate of existing species column
+  mutate(species2 = species)
+
+waterfowl_highlight <- ggplot(mapping = aes(x = observation_date, 
+                                             y = total)) +
+  # first layer: grey lines for all species counts
+  geom_line(data = waterfowl_highlight |> 
+              select(-species), 
+            mapping = aes(group = species2), 
+            color = "grey", 
+            linewidth = 0.5, 
+            alpha = 0.5) +
+  # second layer: colored lines for individual species counts
+  geom_line(data = waterfowl_highlight, 
+            mapping = aes(color = species),
+            linewidth = 1) +
+  # different panels for each species
+  facet_wrap(~species) +
+  
+  # axis appearance -----
+  # adjusting appearance of x-axis
+  scale_x_date(
+    # setting breaks so that date labels appear every month
+    breaks = as_date(c("2024-10-01", "2024-11-01", "2024-12-01",
+                       "2025-01-01", "2025-02-01", "2025-03-01",
+                       "2025-04-01", "2025-05-01", "2025-06-01",
+                       "2025-07-01", "2025-08-01", "2025-09-01")),
+    # label dates with month abbreviations
+    date_labels = "%b") +
+  # set y-axis expansion
+  scale_y_continuous(expand = expansion(mult = c(0.01, 0.1))) +
+  
+  # other plot appearance customization -----
+  # set custom colors
+  scale_color_manual(values = colors) +
+    # relabelling x- and y-axes
+    labs(x = "Date",
+         y = "Total counts") +
+    # theme adjustments
+    theme(legend.position = "none",
+          panel.grid = element_blank(),
+          legend.background = element_blank(),
+          strip.background = element_rect(color = "#000000",
+                                          fill = "#FFFFFF"))
+
+waterfowl_highlight
+```
+
+### Plotting Shorebird Species through 2025 Water Year
+
+```{r}
+#| label: shorebird-highlights
+#| fig-width: 11
+#| fig-height: 8
+
+# creating new data frame for highlighted plot
+shorebird_highlight <- shorebird_species |> 
+  # creating new column that is a duplicate of existing species column
+  mutate(species2 = species)
+
+shorebird_highlight <- ggplot(mapping = aes(x = observation_date, 
+                                             y = total)) +
+  # first layer: grey lines for all species counts
+  geom_line(data = shorebird_highlight |> 
+              select(-species), 
+            mapping = aes(group = species2), 
+            color = "grey", 
+            linewidth = 0.5, 
+            alpha = 0.5) +
+  # second layer: colored lines for individual species counts
+  geom_line(data = shorebird_highlight, 
+            mapping = aes(color = species),
+            linewidth = 1) +
+  # different panels for each species
+  facet_wrap(~species) +
+  
+  # axis appearance -----
+  # adjusting appearance of x-axis
+  scale_x_date(
+    # setting breaks so that date labels appear every month
+    breaks = as_date(c("2024-10-01", "2024-11-01", "2024-12-01",
+                       "2025-01-01", "2025-02-01", "2025-03-01",
+                       "2025-04-01", "2025-05-01", "2025-06-01",
+                       "2025-07-01", "2025-08-01", "2025-09-01")),
+    # label dates with month abbreviations
+    date_labels = "%b") +
+  # set y-axis expansion
+  scale_y_continuous(expand = expansion(mult = c(0.01, 0.1))) +
+  
+  # other plot appearance customization -----
+  # set custom colors
+  scale_color_manual(values = colors) +
+    # relabelling x- and y-axes
+    labs(x = "Date",
+         y = "Total counts") +
+    # theme adjustments
+    theme(legend.position = "none",
+          panel.grid = element_blank(),
+          legend.background = element_blank(),
+          strip.background = element_rect(color = "#000000",
+                                          fill = "#FFFFFF"))
+
+shorebird_highlight
+```
+
 ### Plotting Shorebirds and Waterfowl counts through time 2025 WY
 
 ```{r}
@@ -400,6 +593,8 @@ ggplot(data = shorebird_waterfowl_25,
              size = 10)
   
 ```
+
+**Addressing Rubric Feedback**: We added major events to this line graph to add context to any increases or decreases in bird count/ abundance
 
 ### Plotting Shorebirds and Waterfowl counts over different Water Elevations
 
