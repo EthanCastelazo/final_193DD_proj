@@ -473,6 +473,8 @@ waterfowl_highlight <- ggplot(mapping = aes(x = observation_date,
 waterfowl_highlight
 ```
 
+**Addressing Rubric Feedback**: Created plots through time to show species fluctuations in the 2025 water year, specifically for Waterfowl
+
 ### Plotting Shorebird Species through 2025 Water Year
 
 ```{r}
@@ -529,6 +531,8 @@ shorebird_highlight <- ggplot(mapping = aes(x = observation_date,
 
 shorebird_highlight
 ```
+
+**Addressing Rubric Feedback**: Created plots through time to show species fluctuations in the 2025 water year, specifically for Shorebirds
 
 ### Plotting Shorebirds and Waterfowl counts through time 2025 WY
 
