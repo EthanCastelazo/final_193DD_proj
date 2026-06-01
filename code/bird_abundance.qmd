@@ -474,7 +474,8 @@ waterfowl_highlight <- ggplot(mapping = aes(x = observation_date,
   scale_color_manual(values = colors) +
     # relabelling x- and y-axes
     labs(x = "Date",
-         y = "Total counts") +
+         y = "Total counts",
+         title = "Waterfowl Species Counts in the 2025 Water Year",) +
     # theme adjustments
     theme(legend.position = "none",
           panel.grid = element_blank(),
@@ -533,7 +534,8 @@ shorebird_highlight <- ggplot(mapping = aes(x = observation_date,
   scale_color_manual(values = colors) +
     # relabelling x- and y-axes
     labs(x = "Date",
-         y = "Total counts") +
+         y = "Total counts",
+         title = "Shorebird Species Counts in the 2025 Water Year",) +
     # theme adjustments
     theme(legend.position = "none",
           panel.grid = element_blank(),
