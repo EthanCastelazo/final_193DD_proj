@@ -157,57 +157,6 @@ abundant_species_counts <- bird_wy2025 %>%
   arrange(-total_count)
 ```
 
-
-### Wrangling Waterfowl Species
-
-```{r}
-#| label: wrangling-all-waterfowl
-
-# creating new object from birds
- waterfowl_species<- bird_wy2025 |> 
-  # filter to only include shorebords and observations in 2025 water year
-  filter(e_bird_group == "Waterfowl") |> 
-  # calculate total counts per species for a survey
-  group_by(observation_date, species) |> 
-  summarize(total = sum(count)) |> 
-  ungroup() |> 
-  # fill in any missing observation date and species combinations with 0
-  complete(observation_date, species,
-           fill = list(total = 0)) |> 
-  # add a column to direct label lines
-  group_by(species) |> 
-  mutate(species_label = case_when(
-    observation_date == min(observation_date) ~ species
-  )) |> 
-  ungroup() |> 
-  mutate(species = fct_reorder(species, total, .fun = median, .desc = TRUE))
-```
-
-### Wrangling Shorebird Species
-
-```{r}
-#| label: wrangling-all-shorebird
-
-# creating new object from birds
- shorebird_species<- bird_wy2025 |> 
-  # filter to only include shorebords and observations in 2025 water year
-  filter(e_bird_group == "Shorebirds") |> 
-  # calculate total counts per species for a survey
-  group_by(observation_date, species) |> 
-  summarize(total = sum(count)) |> 
-  ungroup() |> 
-  # fill in any missing observation date and species combinations with 0
-  complete(observation_date, species,
-           fill = list(total = 0)) |> 
-  # add a column to direct label lines
-  group_by(species) |> 
-  mutate(species_label = case_when(
-    observation_date == min(observation_date) ~ species
-  )) |> 
-  ungroup() |> 
-  mutate(species = fct_reorder(species, total, .fun = median, .desc = TRUE))
-```
-
 ### Wrangling Water
 
 ```{r}
@@ -233,6 +182,69 @@ venoco_daily <- venoco_clean |>
   ungroup()
 
 ```
+
+
+### Wrangling Waterfowl Species
+
+```{r}
+#| label: wrangling-all-waterfowl
+
+# creating new object from birds
+ waterfowl_species<- bird_wy2025 |> 
+  # filter to only include shorebords and observations in 2025 water year
+  filter(e_bird_group == "Waterfowl") |> 
+  # calculate total counts per species for a survey
+  group_by(observation_date, species) |> 
+  summarize(total = sum(count)) |> 
+  ungroup() |> 
+  # fill in any missing observation date and species combinations with 0
+  complete(observation_date, species,
+           fill = list(total = 0)) |> 
+  # add a column to direct label lines
+  group_by(species) |> 
+  mutate(species_label = case_when(
+    observation_date == min(observation_date) ~ species
+  )) |> 
+  ungroup() |> 
+  mutate(species = fct_reorder(species, total, .fun = median, .desc = TRUE))
+
+waterfowl_species_elevation <- waterfowl_species |>  
+  left_join(venoco_daily,
+  # naming shared columns between both data frames
+  by = c("observation_date" = "date"))
+  
+```
+
+### Wrangling Shorebird Species
+
+```{r}
+#| label: wrangling-all-shorebird
+
+# creating new object from birds
+ shorebird_species<- bird_wy2025 |> 
+  # filter to only include shorebords and observations in 2025 water year
+  filter(e_bird_group == "Shorebirds") |> 
+  # calculate total counts per species for a survey
+  group_by(observation_date, species) |> 
+  summarize(total = sum(count)) |> 
+  ungroup() |> 
+  # fill in any missing observation date and species combinations with 0
+  complete(observation_date, species,
+           fill = list(total = 0)) |> 
+  # add a column to direct label lines
+  group_by(species) |> 
+  mutate(species_label = case_when(
+    observation_date == min(observation_date) ~ species
+  )) |> 
+  ungroup() |> 
+  mutate(species = fct_reorder(species, total, .fun = median, .desc = TRUE))
+
+shorebird_species_elevation <- shorebird_species |>  
+  left_join(venoco_daily,
+  # naming shared columns between both data frames
+  by = c("observation_date" = "date"))
+```
+
 
 ### Shorebird Wrangling
 
@@ -628,7 +640,57 @@ ggplot(data = shorebird_waterfowl_25,
 
 **Addressing Rubric Feedback**: water elevation is plotted with abundance using a scatter plot rather than a bar chart. Additionally, we are now comparing our response variable across bird groups instead of isolating their patterns.
 
+### Plotting Waterfowl Species with Water Elevation
 
+```{r}
+#| label: waterfowl-elevation-plotting
+#| fig-height: 4
+#| fig-width: 10
+
+ggplot(data = waterfowl_species_elevation,
+       aes(x = mean_level_m,
+           y = total,
+           color = species)) +
+  # setting point geometry
+  geom_point() +
+  # changing background theme
+  theme_bw() +
+  # custom colors
+  scale_color_manual(values = colors) +
+  # Adding axis titles, title and legend
+  labs(
+    x = "Venoco Bridge Water Elevation (meters)",
+    y = "Bird Count",
+    color = "Species",
+    title = "Water Elevation Effects on Waterfowl Species in Water Year 2025")
+  
+```
+
+### Plotting Shorebird Species with Water Elevation
+
+```{r}
+#| label: shorebird-elevation-plotting
+#| fig-height: 4
+#| fig-width: 10
+
+ggplot(data = shorebird_species_elevation,
+       aes(x = mean_level_m,
+           y = total,
+           color = species)) +
+  # setting point geometry
+  geom_point() +
+  # changing background theme
+  theme_bw() +
+  # custom colors
+  scale_color_manual(values = colors) +
+  # Adding axis titles, title and legend
+  labs(
+    x = "Venoco Bridge Water Elevation (meters)",
+    y = "Bird Count",
+    color = "Species",
+    title = "Water Elevation Effects on Shorebird Species in Water Year 2025")
+  
+```
 ## Elective Planning 
 
 **Edits to these plans address the rubric feedback which stated we were lacking sufficient information on the specific spp we would include.**
