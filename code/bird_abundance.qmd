@@ -93,6 +93,7 @@ venoco_water <- read_csv(here("data", "venoco-water.csv"))
 
 ```
 
+
 ```{r}
 #| label: plot-aesthetics
 
@@ -325,6 +326,19 @@ cor.test(~ total_count + mean_level_m, data = waterfowl_wy2025, method = "pearso
 ### Plotting Shorebirds
 
 ```{r}
+#| label: custom-color-palettes
+my_13_colors <- c(
+  "#1B9E77", "#D95F02", "#7570B3", "#E7298A", "#66A61E", 
+  "#E6AB02", "#A6761D", "#666666", "#377EB8", "#E41A1C", 
+  "#FFD700", "#984EA3", "#FF6B6B")
+
+my_8_colors <- c(
+  "#1B9E77", "#D95F02", "#7570B3", "#E7298A", "#66A61E", 
+  "#E6AB02", "#A6761D", "#666666")
+```
+
+
+```{r}
 #| label: shorebird-species-count-plot
 #| fig-height: 4
 #| fig-width: 10
@@ -338,6 +352,11 @@ ggplot(data = shorebird_total_count,
                      fill = species)) + 
   #first layer: column to represent counts
   geom_col() +
+  #using custom colors
+  scale_color_manual(values = my_8_colors) +
+  # getting rid of the space at the bottom of the y-axis
+  scale_y_continuous(expand = c(0, 0),
+                     limits = c(0, 300)) +
   # taking out the legend
   theme(legend.position = "none") +
   #relabelling x and y axes, adding title
@@ -364,6 +383,11 @@ ggplot(data = waterfowl_total_count,
                      fill = species)) + 
   #first layer: column to represent counts
   geom_col() +
+  #using custom colors
+  scale_color_manual(values = my_13_colors) +
+  # getting rid of the empty space at the bottom of the y-axis
+  scale_y_continuous(expand = c(0, 0),
+                     limits = c(0, 500)) +
   # taking out the legend
   theme(legend.position = "none") +
   #relabelling x and y axes, adding title
