@@ -299,14 +299,25 @@ shorebird_waterfowl_25 <- bird_wy2025 |>
 shorebird_wy2025 <- shorebird_waterfowl_25 %>% 
   filter(e_bird_group == "Shorebirds")
 
+waterfowl_wy2025 <- shorebird_waterfowl_25 %>% 
+  filter(e_bird_group == "Waterfowl")
+
 ```
 
 ```{r}
-#| label: Pearson-Correlation
+#| label: Shorebirds-Pearson-Correlation
 
 cor.test(~ total_count + mean_level_m, data = shorebird_wy2025, method = "pearson")
 
 ```
+
+```{r}
+#| label: Waterfowl-Pearson-Correlation
+
+cor.test(~ total_count + mean_level_m, data = waterfowl_wy2025, method = "pearson")
+
+```
+
 
 
 ## 3. Exploring Visualizations
@@ -627,6 +638,8 @@ ggplot(data = shorebird_waterfowl_25,
            color = e_bird_group)) +
   # setting point geometry
   geom_point() +
+  # adding a linear regression of best fit with the Lowess technique
+  geom_smooth(method = "lm", se = TRUE) +
   # changing background theme
   theme_bw() +
   # custom colors
