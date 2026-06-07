@@ -1,0 +1,22 @@
+---
+title: "Final_Paper"
+format: pdf
+author: "Alex, Ethan, Zelda"
+source: editor
+execute: 
+  echo: false
+---
+
+# Introduction
+
+
+# Methods
+
+
+# Results
+
+
+# Discussion
+
+
+# References
