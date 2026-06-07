@@ -1,8 +1,10 @@
 ---
 title: "Final_Paper"
-format: pdf
 author: "Alex, Ethan, Zelda"
 source: editor
+format: 
+  pdf:
+    toc: true
 execute: 
   echo: false
 ---
