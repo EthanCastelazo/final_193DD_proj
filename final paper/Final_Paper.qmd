@@ -250,20 +250,7 @@ waterfowl_wy2025 <- shorebird_waterfowl_25 %>%
 
 ```
 
-```{r}
-#| label: Shorebirds-Pearson-Correlation
 
-cor.test(~ total_count + mean_level_m, data = shorebird_wy2025, method = "pearson")
-
-```
-
-```{r}
-#| label: Waterfowl-Pearson-Correlation
-#| results: hide
-
-cor.test(~ total_count + mean_level_m, data = waterfowl_wy2025, method = "pearson")
-
-```
 
 
 # Introduction
