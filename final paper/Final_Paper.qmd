@@ -273,7 +273,7 @@ cor.test(~ total_count + mean_level_m, data = waterfowl_wy2025, method = "pearso
 
 # Results
 
-First and foremost, we explored water elevation and taxonomic abundance as separated variables over time. The first plot shows water elevation through time in the 2025 water year, along with major rain events that significantly spiked water elevation. A limitation for this data is that this water elevation is accurate to local Venoco bridge water elevation, not necessarily the whole wetland.
+First, we explored water elevation and taxonomic abundance as separated variables over time. The first plot shows water elevation through time in the 2025 water year, along with major rain events that significantly spiked water elevation. A limitation for this data is that this water elevation is accurate to local Venoco bridge water elevation, not necessarily the whole wetland.
 ```{r}
 #| label: Venoco-water-elevation
 #| fig-height: 4
