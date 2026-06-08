@@ -401,9 +401,9 @@ ggplot(data = shorebird_waterfowl_25,
 
 Around the February, Waterfowl showed the highest abundance, adapting well to the high water elevation while its counterpart, the Shorebirds, showed a heavy decline in abundance from high water elevation. Shorebirds continued to decline in numbers, showing a record low right before June before rising back up through to August as water elevation continued to decline. 
 
-After reaching their record highest abundance in February, Waterfowl began to decline in March, but suddenly shot back up in abundance in June when Shorebird abundance was almost zero. The plot highlights sharp deviation between the two taxonomic groups, possibly revealing that water elevation affects them differently.
+After reaching their record highest abundance in February, Waterfowl began to decline in March, but suddenly shot back up in abundance in June when Shorebird abundance was almost zero. The plot highlights sharp deviation between the two taxonomic groups, revealing how water elevation affects them differently.
 
-After plotting each variable separately, we continued our exploration by creating a scatter plot of the two variables. 
+After plotting each variable separately, we continued our exploration by creating a scatter plot combining both variables. 
 
 ```{r}
 #| label: Shorebird-waterfowl-plotting
@@ -433,6 +433,179 @@ ggplot(data = shorebird_waterfowl_25,
 
 This plot revealed correlation between water elevation and these taxonomic groups in NCOS. We applied the Pearson's correlation test to find exact values of this correlation. Waterfowl show a positive correlation between bird abundance and water elevation with a correlation value of 0.785. In contrast, Shorebirds have a negative correlation value of -0.445. Therefore, this scatter plot shows how as water elevation increases, Shorebird abundance drops, and Waterfowl abundance climbs.
 
+These plots only revealed patterns for each taxonomic group as a whole, therefore we decided to plot species abundance over time to see which species were exhibiting this correlation the most. We chose highlight plots to visualize abundance through time for each species.
+
+```{r}
+#| label: waterfowl-highlights
+#| fig-width: 11
+#| fig-height: 8
+
+# creating new data frame for highlighted plot
+waterfowl_highlight <- waterfowl_species |> 
+  # creating new column that is a duplicate of existing species column
+  mutate(species2 = species)
+
+waterfowl_highlight <- ggplot(mapping = aes(x = observation_date, 
+                                             y = total)) +
+  # first layer: grey lines for all species counts
+  geom_line(data = waterfowl_highlight |> 
+              select(-species), 
+            mapping = aes(group = species2), 
+            color = "grey", 
+            linewidth = 0.5, 
+            alpha = 0.5) +
+  # second layer: colored lines for individual species counts
+  geom_line(data = waterfowl_highlight, 
+            mapping = aes(color = species),
+            linewidth = 1) +
+  # different panels for each species
+  facet_wrap(~species) +
+  
+  # axis appearance -----
+  # adjusting appearance of x-axis
+  scale_x_date(
+    # setting breaks so that date labels appear every month
+    breaks = as_date(c("2024-10-01", "2024-11-01", "2024-12-01",
+                       "2025-01-01", "2025-02-01", "2025-03-01",
+                       "2025-04-01", "2025-05-01", "2025-06-01",
+                       "2025-07-01", "2025-08-01", "2025-09-01")),
+    # label dates with month abbreviations
+    date_labels = "%b") +
+  # set y-axis expansion
+  scale_y_continuous(expand = expansion(mult = c(0.01, 0.1))) +
+  
+  # other plot appearance customization -----
+  # set custom colors
+  scale_color_manual(values = colors) +
+    # relabelling x- and y-axes
+    labs(x = "Date",
+         y = "Total counts",
+         title = "Waterfowl Species Counts in the 2025 Water Year",) +
+    # theme adjustments
+    theme(legend.position = "none",
+          panel.grid = element_blank(),
+          legend.background = element_blank(),
+          strip.background = element_rect(color = "#000000",
+                                          fill = "#FFFFFF"))
+
+waterfowl_highlight
+```
+
+Upon further inspection of waterfowl individual species, the general taxonomic trends are attributed to the two most abundant species of waterfowl.The Mallard and Canadian Goose makeup the general taxonomic trends, meaning the positive correlation of 0.785 wouldn't apply to the 11 remaining waterfowl species.
+
+We applied the same test to Shorebirds.
+
+```{r}
+#| label: shorebird-highlights
+#| fig-width: 11
+#| fig-height: 8
+
+# creating new data frame for highlighted plot
+shorebird_highlight <- shorebird_species |> 
+  # creating new column that is a duplicate of existing species column
+  mutate(species2 = species)
+
+shorebird_highlight <- ggplot(mapping = aes(x = observation_date, 
+                                             y = total)) +
+  # first layer: grey lines for all species counts
+  geom_line(data = shorebird_highlight |> 
+              select(-species), 
+            mapping = aes(group = species2), 
+            color = "grey", 
+            linewidth = 0.5, 
+            alpha = 0.5) +
+  # second layer: colored lines for individual species counts
+  geom_line(data = shorebird_highlight, 
+            mapping = aes(color = species),
+            linewidth = 1) +
+  # different panels for each species
+  facet_wrap(~species) +
+  
+  # axis appearance -----
+  # adjusting appearance of x-axis
+  scale_x_date(
+    # setting breaks so that date labels appear every month
+    breaks = as_date(c("2024-10-01", "2024-11-01", "2024-12-01",
+                       "2025-01-01", "2025-02-01", "2025-03-01",
+                       "2025-04-01", "2025-05-01", "2025-06-01",
+                       "2025-07-01", "2025-08-01", "2025-09-01")),
+    # label dates with month abbreviations
+    date_labels = "%b") +
+  # set y-axis expansion
+  scale_y_continuous(expand = expansion(mult = c(0.01, 0.1))) +
+  
+  # other plot appearance customization -----
+  # set custom colors
+  scale_color_manual(values = colors) +
+    # relabelling x- and y-axes
+    labs(x = "Date",
+         y = "Total counts",
+         title = "Shorebird Species Counts in the 2025 Water Year",) +
+    # theme adjustments
+    theme(legend.position = "none",
+          panel.grid = element_blank(),
+          legend.background = element_blank(),
+          strip.background = element_rect(color = "#000000",
+                                          fill = "#FFFFFF"))
+
+shorebird_highlight
+```
+
+The same phenomenon occurs with the Shorebirds as the two most abundant species, the Killdeer and Least Sandpiper, follow the negative correlation trend the closes - especially the Killdeer. The remaining 6 Shorebird species did not closely follow this correlation at all. 
+
+Finally, we combined individual species abundance with water elevation to see how the most abundant species were affected by different water levels.
+
+```{r}
+#| label: waterfowl-elevation-plotting
+#| fig-height: 4
+#| fig-width: 9
+
+ggplot(data = waterfowl_species_elevation,
+       aes(x = mean_level_m,
+           y = total,
+           color = species)) +
+  # setting point geometry
+  geom_point() +
+  # changing background theme
+  theme_bw() +
+  # custom colors
+  scale_color_manual(values = colors) +
+  # Adding axis titles, title and legend
+  labs(
+    x = "Venoco Bridge Water Elevation (meters)",
+    y = "Bird Count",
+    color = "Species",
+    title = "Water Elevation Effects on Waterfowl Species in Water Year 2025")
+  
+```
+
+```{r}
+#| label: shorebird-elevation-plotting
+#| fig-height: 4
+#| fig-width: 9
+
+ggplot(data = shorebird_species_elevation,
+       aes(x = mean_level_m,
+           y = total,
+           color = species)) +
+  # setting point geometry
+  geom_point() +
+  # changing background theme
+  theme_bw() +
+  # custom colors
+  scale_color_manual(values = colors) +
+  # Adding axis titles, title and legend
+  labs(
+    x = "Venoco Bridge Water Elevation (meters)",
+    y = "Bird Count",
+    color = "Species",
+    title = "Water Elevation Effects on Shorebird Species in Water Year 2025")
+  
+```
+
+These final figures display how only the most abundant species display the general correlation trends. Therefore examining bird abundance by taxonomic groups yields inaccurate patterns, since the data is highly influenced by only a select few species, rather than the group as a whole. Water elevation effects on bird species should be evaluated by species to address nuance between each species within the taxonomic group.
+
+In conclusion, our results highlight how the Mallard and Canadian Goose (Waterfowl) are more abundant in water elevations around 2 meters while the Killdeer and Least Sandpiper (Shorebirds) are more abundant in water elevations below 1.4 meters.
 
 # Discussion
 
