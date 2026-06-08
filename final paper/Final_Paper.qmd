@@ -259,6 +259,7 @@ cor.test(~ total_count + mean_level_m, data = shorebird_wy2025, method = "pearso
 
 ```{r}
 #| label: Waterfowl-Pearson-Correlation
+#| results: hide
 
 cor.test(~ total_count + mean_level_m, data = waterfowl_wy2025, method = "pearson")
 
