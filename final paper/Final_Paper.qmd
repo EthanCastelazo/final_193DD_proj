@@ -7,6 +7,8 @@ format:
     toc: true
 execute: 
   echo: false
+  message: false
+  warning: false
 ---
  
 ```{r}
@@ -109,7 +111,6 @@ abundant_species_counts <- bird_wy2025 %>%
   arrange(-total_count)
 ```
 
-### Wrangling Water
 
 ```{r}
 #| label: water-wrangling
@@ -135,8 +136,6 @@ venoco_daily <- venoco_clean |>
 
 ```
 
-
-### Wrangling Waterfowl Species
 
 ```{r}
 #| label: wrangling-all-waterfowl
@@ -167,7 +166,6 @@ waterfowl_species_elevation <- waterfowl_species |>
   
 ```
 
-### Wrangling Shorebird Species
 
 ```{r}
 #| label: wrangling-all-shorebird
@@ -198,8 +196,6 @@ shorebird_species_elevation <- shorebird_species |>
 ```
 
 
-### Shorebird Wrangling
-
 ```{r}
 #| label: shorebird-wrangling
 
@@ -214,7 +210,6 @@ shorebird_total_count <- bird_wy2025 |>
   arrange(-total_count)
 ```
 
-### Waterfowl Wrangling
 
 ```{r}
 #| label: waterfowl-wrangling
@@ -230,7 +225,6 @@ waterfowl_total_count <- bird_wy2025 |>
   arrange(-total_count)
 ```
 
-### Wrangling Shorebird and Waterfowl
 
 ```{r}
 #| label: wrangling-shorebirds-waterfowl
@@ -278,6 +272,166 @@ cor.test(~ total_count + mean_level_m, data = waterfowl_wy2025, method = "pearso
 
 
 # Results
+
+First and foremost, we explored water elevation and taxonomic abundance as separated variables over time. The first plot shows water elevation through time in the 2025 water year, along with major rain events that significantly spiked water elevation. A limitation for this data is that this water elevation is accurate to local Venoco bridge water elevation, not necessarily the whole wetland.
+```{r}
+#| label: Venoco-water-elevation
+#| fig-height: 4
+#| fig-width: 10
+#| 
+ggplot(data = venoco_daily,
+       # x axis is species in descending order of total count
+       # # y axis is total count
+       # filling columns by species
+       mapping = aes(x = date,
+                     y = mean_level_m)) + 
+  #first layer: column to represent counts
+  geom_point() +
+  # adding line
+  geom_line() +
+  # adjusting appearance of x-axis
+  scale_x_date(
+    # setting limits (no upper bound)
+    limits = c(as_date("2024-10-01"), NA),
+    # setting breaks so that date labels appear every month
+    breaks = as_date(c("2024-10-01", "2024-11-01", "2024-12-01",
+                       "2025-01-01", "2025-02-01", "2025-03-01",
+                       "2025-04-01", "2025-05-01", "2025-06-01",
+                       "2025-07-01", "2025-08-01", "2025-09-01")),
+    # label dates with month abbreviations
+    date_labels = "%b") +
+   scale_y_continuous(expand = expansion(mult = c(0.01, 0.1))) +
+  # custom theme
+  theme_bw() +
+  # taking out the legend
+  theme(legend.position = "none") +
+  #relabelling x and y axes, adding title
+  labs(x = "Date",
+       y = "Mean Water Level (meter)",
+       title = "Water Elevation through 2025") +
+  # add vertical line for major rain event in January
+  geom_vline(xintercept = as_date("2025-01-26"),
+             linetype = "dashed") +
+  # text label (from cowplot package)
+  draw_label("First major rain event\n(3.40 in)",
+             # x- and y-axis position
+             x = as_date("2025-01-20"),   
+             y = 2.6,
+             # right alignment
+             hjust = 1,
+             # text size
+             size = 10) +
+  # add vertical line for major rain event in March
+  geom_vline(xintercept = as_date("2025-03-12"),
+             linetype = "dashed") +
+  # text label
+  draw_label("Last major rain event\n(1.11 in)",
+             # x- and y-axis position
+             x = as_date("2025-03-17"),   
+             y = 2.6,
+             # left alignment
+             hjust = 0,
+             # text size
+             size = 10)
+```
+
+Here you can observe that the highest elevation reached around 2.6 meters with highest elevations concentrating in February 2025. After April, the water levels exhibit a steady decline until August. We then examined how bird counts looked over time within the two taxonomic groups Waterfowl and Shorebirds.
+
+```{r}
+#| label: Shorebird-waterfowl-time-plot
+#| fig-height: 4
+#| fig-width: 10
+
+ggplot(data = shorebird_waterfowl_25,
+       aes(x = observation_date,
+           y = total_count,
+           color = e_bird_group)) +
+  # setting point geometry
+  geom_point() +
+  # adding line geometry
+  geom_line() +
+   # adjusting appearance of x-axis
+  scale_x_date(
+    # setting limits (no upper bound)
+    limits = c(as_date("2024-10-01"), NA),
+    # setting breaks so that date labels appear every month
+    breaks = as_date(c("2024-10-01", "2024-11-01", "2024-12-01",
+                       "2025-01-01", "2025-02-01", "2025-03-01",
+                       "2025-04-01", "2025-05-01", "2025-06-01",
+                       "2025-07-01", "2025-08-01", "2025-09-01")),
+    # label dates with month abbreviations
+    date_labels = "%b") +
+   scale_y_continuous(expand = expansion(mult = c(0.01, 0.1))) +
+  # changing background theme
+  theme_bw() +
+  # custom colors
+  scale_color_paletteer_d("nationalparkcolors::DeathValley") +
+  # Adding axis titles, title and legend
+  labs(
+    x = "Time",
+    y = "Bird Count",
+    color = "Taxonomic Group",
+    title = "Shorebirds and Waterfowl Counts in Water Year 2025") +
+  # add vertical line for major rain event in January
+  geom_vline(xintercept = as_date("2025-01-26"),
+             linetype = "dashed") +
+  # text label (from cowplot package)
+  draw_label("First major rain event\n(3.40 in)",
+             # x- and y-axis position
+             x = as_date("2025-01-20"),   
+             y = 160,
+             # right alignment
+             hjust = 1,
+             # text size
+             size = 10) +
+  # add vertical line for major rain event in March
+  geom_vline(xintercept = as_date("2025-03-12"),
+             linetype = "dashed") +
+  # text label
+  draw_label("Last major rain event\n(1.11 in)",
+             # x- and y-axis position
+             x = as_date("2025-03-17"),   
+             y = 160,
+             # left alignment
+             hjust = 0,
+             # text size
+             size = 10)
+  
+```
+
+Around the February, Waterfowl showed the highest abundance, adapting well to the high water elevation while its counterpart, the Shorebirds, showed a heavy decline in abundance from high water elevation. Shorebirds continued to decline in numbers, showing a record low right before June before rising back up through to August as water elevation continued to decline. 
+
+After reaching their record highest abundance in February, Waterfowl began to decline in March, but suddenly shot back up in abundance in June when Shorebird abundance was almost zero. The plot highlights sharp deviation between the two taxonomic groups, possibly revealing that water elevation affects them differently.
+
+After plotting each variable separately, we continued our exploration by creating a scatter plot of the two variables. 
+
+```{r}
+#| label: Shorebird-waterfowl-plotting
+#| fig-height: 4
+#| fig-width: 10
+
+ggplot(data = shorebird_waterfowl_25,
+       aes(x = mean_level_m,
+           y = total_count,
+           color = e_bird_group)) +
+  # setting point geometry
+  geom_point() +
+  # adding a linear regression of best fit with the Lowess technique
+  geom_smooth(method = "lm", se = TRUE) +
+  # changing background theme
+  theme_bw() +
+  # custom colors
+  scale_color_paletteer_d("nationalparkcolors::DeathValley") +
+  # Adding axis titles, title and legend
+  labs(
+    x = "Venoco Bridge Water Elevation (meters)",
+    y = "Bird Count",
+    color = "Taxonomic Group",
+    title = "Water Elevation Effects on Shorebirds and Waterfowl in Water Year 2025")
+  
+```
+
+This plot revealed correlation between water elevation and these taxonomic groups in NCOS. We applied the Pearson's correlation test to find exact values of this correlation. Waterfowl show a positive correlation between bird abundance and water elevation with a correlation value of 0.785. In contrast, Shorebirds have a negative correlation value of -0.445. Therefore, this scatter plot shows how as water elevation increases, Shorebird abundance drops, and Waterfowl abundance climbs.
 
 
 # Discussion
