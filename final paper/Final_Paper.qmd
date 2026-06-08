@@ -8,6 +8,268 @@ format:
 execute: 
   echo: false
 ---
+ 
+```{r}
+#| label: packages
+#| message: false
+
+# general use
+library(tidyverse)
+library(here)
+library(janitor)
+library(snakecase)
+library(dplyr)
+
+#Wrap Axis Label
+library(scales)
+
+#reading .xlsx files
+library(readxl)
+
+# visualize missing data
+library(naniar)
+
+# visualizing
+library(patchwork)
+library(flextable)
+library(ggridges)
+library(NatParksPalettes)
+library(paletteer)
+library(ggrepel)
+library(cowplot)
+```
+
+```{r}
+#| label: data
+birds <- read_csv(here("data", "birds.csv"))
+
+venoco_water <- read_csv(here("data", "venoco-water.csv"))
+
+```
+
+
+```{r}
+#| label: plot-aesthetics
+
+colors <- c(
+  "#0077BB",
+  "#33BBEE",
+  "#009988",
+  "#EE7733",
+  "#CC3311",
+  "#EE3377",
+  "#AA4499",
+  "#AA4",
+  "#374890",
+  "#33B458",
+  "#009",
+  "#EE7",
+  "#CC5869"
+  
+)
+
+theme_set(
+  theme_bw() +
+    theme(text = element_text(size = 14))
+)
+```
+
+
+```{r}
+#| label: bird-wrangling
+
+
+#created a new object from birds
+bird_wy2025 <- birds %>% 
+  # exclude repeat observations
+  mutate(observation_date = as.Date(observation_date, format = "%m/%d/%y")) %>% 
+  filter(observation_date > as.Date("2024-11-13") & observation_date < as.Date("2025-10-22"),
+         repeat_observation == "No",
+         e_bird_group %in% c("Waterfowl",
+                             "New World Sparrows",
+                             "Martins and Swallows",
+                             "Shorebirds")) %>% 
+  # filling in taxanomic information about order and families for eBird groups
+  mutate(lowest_group = case_when(
+    e_bird_group == "New World Sparrows" ~ "Passerellidae",
+    e_bird_group == "Martins and Swallows" ~ "Hirundinidae",
+    e_bird_group == "Shorebirds" ~ "Charadriiformes",
+    e_bird_group == "Waterfowl" ~ "Anatidae"
+  ))
+
+
+
+# creating new object from most_abundant_groups
+abundant_species_counts <- bird_wy2025 %>% 
+  # grouping by speices
+  group_by(season, e_bird_group, species) %>% 
+  # calculating total counts for each species
+  summarize(total_count = sum(count)) %>% 
+  # arranging in descending order
+  arrange(-total_count)
+```
+
+### Wrangling Water
+
+```{r}
+#| label: water-wrangling
+
+# Creating a new object from venoco_water
+venoco_clean <- venoco_water |> 
+  # filter to only include 2025 water year
+  filter(wy == "2025") |> 
+  # creating a new column to convert water elevation in ft to meters
+  mutate(comp_level_m = (comp_level_ft + 2.96) * 0.3048) |> 
+  # selecting columns of interest
+  select(date, comp_level_m, temperature)
+
+
+# create a new object from Venoco_clean
+venoco_daily <- venoco_clean |> 
+# group by date
+  group_by(date) |> 
+# calculate mean water level for each day
+  summarize(mean_level_m = mean(comp_level_m, na.rm = TRUE)) |> 
+# ungroup the data frame
+  ungroup()
+
+```
+
+
+### Wrangling Waterfowl Species
+
+```{r}
+#| label: wrangling-all-waterfowl
+
+# creating new object from birds
+ waterfowl_species<- bird_wy2025 |> 
+  # filter to only include shorebords and observations in 2025 water year
+  filter(e_bird_group == "Waterfowl") |> 
+  # calculate total counts per species for a survey
+  group_by(observation_date, species) |> 
+  summarize(total = sum(count)) |> 
+  ungroup() |> 
+  # fill in any missing observation date and species combinations with 0
+  complete(observation_date, species,
+           fill = list(total = 0)) |> 
+  # add a column to direct label lines
+  group_by(species) |> 
+  mutate(species_label = case_when(
+    observation_date == min(observation_date) ~ species
+  )) |> 
+  ungroup() |> 
+  mutate(species = fct_reorder(species, total, .fun = median, .desc = TRUE))
+
+waterfowl_species_elevation <- waterfowl_species |>  
+  left_join(venoco_daily,
+  # naming shared columns between both data frames
+  by = c("observation_date" = "date"))
+  
+```
+
+### Wrangling Shorebird Species
+
+```{r}
+#| label: wrangling-all-shorebird
+
+# creating new object from birds
+ shorebird_species<- bird_wy2025 |> 
+  # filter to only include shorebords and observations in 2025 water year
+  filter(e_bird_group == "Shorebirds") |> 
+  # calculate total counts per species for a survey
+  group_by(observation_date, species) |> 
+  summarize(total = sum(count)) |> 
+  ungroup() |> 
+  # fill in any missing observation date and species combinations with 0
+  complete(observation_date, species,
+           fill = list(total = 0)) |> 
+  # add a column to direct label lines
+  group_by(species) |> 
+  mutate(species_label = case_when(
+    observation_date == min(observation_date) ~ species
+  )) |> 
+  ungroup() |> 
+  mutate(species = fct_reorder(species, total, .fun = median, .desc = TRUE))
+
+shorebird_species_elevation <- shorebird_species |>  
+  left_join(venoco_daily,
+  # naming shared columns between both data frames
+  by = c("observation_date" = "date"))
+```
+
+
+### Shorebird Wrangling
+
+```{r}
+#| label: shorebird-wrangling
+
+shorebird_total_count <- bird_wy2025 |> 
+  #filter to only include herons, ibis and allies
+  filter(lowest_group == "Charadriiformes") |> 
+  #group by species
+  group_by(species) |> 
+  #calc total counts per species
+  summarize(total_count = sum(count)) |> 
+  #arrange in descending order by total counts
+  arrange(-total_count)
+```
+
+### Waterfowl Wrangling
+
+```{r}
+#| label: waterfowl-wrangling
+
+waterfowl_total_count <- bird_wy2025 |> 
+  #filter to only include herons, ibis and allies
+  filter(lowest_group == "Anatidae") |> 
+  #group by species
+  group_by(species) |> 
+  #calc total counts per species
+  summarize(total_count = sum(count)) |> 
+  #arrange in descending order by total counts
+  arrange(-total_count)
+```
+
+### Wrangling Shorebird and Waterfowl
+
+```{r}
+#| label: wrangling-shorebirds-waterfowl
+
+shorebird_waterfowl_25 <- bird_wy2025 |> 
+  #filter to only include herons, ibis and allies
+  filter(e_bird_group %in% c("Waterfowl", "Shorebirds")) |> 
+  #group by species
+  group_by(e_bird_group, observation_date) |> 
+  #calc total counts per species
+  summarize(total_count = sum(count)) |> 
+  ungroup() |> 
+  left_join(venoco_daily,
+  # naming shared columns between both data frames
+  by = c("observation_date" = "date"))
+
+
+shorebird_wy2025 <- shorebird_waterfowl_25 %>% 
+  filter(e_bird_group == "Shorebirds")
+
+waterfowl_wy2025 <- shorebird_waterfowl_25 %>% 
+  filter(e_bird_group == "Waterfowl")
+
+```
+
+```{r}
+#| label: Shorebirds-Pearson-Correlation
+
+cor.test(~ total_count + mean_level_m, data = shorebird_wy2025, method = "pearson")
+
+```
+
+```{r}
+#| label: Waterfowl-Pearson-Correlation
+
+cor.test(~ total_count + mean_level_m, data = waterfowl_wy2025, method = "pearson")
+
+```
+
 
 # Introduction
 
