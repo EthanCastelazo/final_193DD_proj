@@ -1,6 +1,7 @@
 ---
-title: "Final_Paper"
-author: "Alex, Ethan, Zelda"
+title: "Abundant Birds - Final Paper"
+author: "Alex Gonzales, Ethan Castelazo, Zelda Reiff"
+date: "6/10/2026"
 source: editor
 format: 
   pdf:
