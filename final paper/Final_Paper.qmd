@@ -10,8 +10,9 @@ execute:
   echo: false
   message: false
   warning: false
+bibliography: references.bib
 ---
- 
+
 ```{r}
 #| label: packages
 #| message: false
@@ -50,7 +51,6 @@ venoco_water <- read_csv(here("data", "venoco-water.csv"))
 
 ```
 
-
 ```{r}
 #| label: plot-aesthetics
 
@@ -76,7 +76,6 @@ theme_set(
     theme(text = element_text(size = 14))
 )
 ```
-
 
 ```{r}
 #| label: bird-wrangling
@@ -112,7 +111,6 @@ abundant_species_counts <- bird_wy2025 %>%
   arrange(-total_count)
 ```
 
-
 ```{r}
 #| label: water-wrangling
 
@@ -136,7 +134,6 @@ venoco_daily <- venoco_clean |>
   ungroup()
 
 ```
-
 
 ```{r}
 #| label: wrangling-all-waterfowl
@@ -167,7 +164,6 @@ waterfowl_species_elevation <- waterfowl_species |>
   
 ```
 
-
 ```{r}
 #| label: wrangling-all-shorebird
 
@@ -196,7 +192,6 @@ shorebird_species_elevation <- shorebird_species |>
   by = c("observation_date" = "date"))
 ```
 
-
 ```{r}
 #| label: shorebird-wrangling
 
@@ -211,7 +206,6 @@ shorebird_total_count <- bird_wy2025 |>
   arrange(-total_count)
 ```
 
-
 ```{r}
 #| label: waterfowl-wrangling
 
@@ -225,7 +219,6 @@ waterfowl_total_count <- bird_wy2025 |>
   #arrange in descending order by total counts
   arrange(-total_count)
 ```
-
 
 ```{r}
 #| label: wrangling-shorebirds-waterfowl
@@ -251,18 +244,28 @@ waterfowl_wy2025 <- shorebird_waterfowl_25 %>%
 
 ```
 
-
-
-
 # Introduction
+
+According to the [State of California Water Quality Monitoring Council](https://mywaterquality.ca.gov/wetland-monitoring/where-are-wetlands.html), California has lost over 90% of its historic wetlands. This alarming degradation of valuable ecosystems is especially pertinent to waterbirds who rely on healthy wetlands for foraging, nesting, and mating purposes [@ma2009], often while traveling along migratory flyways. With such a dramatic loss of wetland habitat, these migration networks have become fragmented, threatening the survivability of many Pacific Coast waterbirds [@donnelly2022]. As part of a broad movement of ecological restoration efforts, UCSB’s Cheadle Center broke ground on a massive wetland restoration project in 2017, converting a flooded golf course into 136 acres of restored wetland and upland habitats into what is now called NCOS (North Campus Open Space). Providing suitable habitat for over 160 bird species. The birds of NCOS have been under close watch since the project's conception, with diligent surveyors reporting their abundance on a regular basis, compiling their findings into a large database spanning back to January 2022. Our research project aims to leverage this data in tandem with water elevation data to investigate the relationship between waterbird abundance and the water level of the Devereux Slough, the defining aquatic feature of NCOS.
+
+We aim to answer this simple research question: how do seasonal changes in water elevation influence waterfowl and shorebird abundance at NCOS? For the sake of precision, we’ve chosen to narrow the scope of our research to include only shorebirds (8 different species) and waterfowl (13 species), and only include observations from water year 2025 (more specifically November 13th 2024 through Sep 30 2025). Existing literature has found decisively that water elevation is a key factor influencing overall bird abundance [@faragó2012] [@kreakie2012]. More specifically, researchers have found that, generally, waterfowl abundance can be predicted in a non-linear fashion in relation to water level. They’re low in abundance when water level is low, and rise in abundance as water rises but eventually reach a threshold, and decrease in abundance as water level continues to rise [@bolduc2008]. For non-diving waterfowl, this trend persists because their foraging and nesting opportunities are ultimately limited when waters get too deep/high. Shorebirds, on the other hand, have been found to be in higher abundance when water levels are low, and decrease in abundance as water level rises [@fonseca2017]. We aim to find out if these findings are consistent with the data collected from NCOS, a relatively recently restored wetland whose ecological dynamics may be unusual.
+
+The findings of this study will help inform the design of future wetland restoration projects similar to NCOS. In order to be effective stewards of waterbird populations, it’s important for scientists to understand the behaviors of waterbirds as much as possible, informed by detailed data and analyses that explain the dynamics between them and environmental variables, such as water elevation. We are confident that our results will contribute to science’s broader understanding of trends in waterbird abundance while providing more localized analysis to NCOS researchers. 
 
 
 # Methods
+
+Since 2017, the Cheadle Center has conducted monthly bird surveys at NCOS, according to the [Project Monitoring Report](https://escholarship.org/uc/item/16p046mb). Starting within 1 hour of sunrise, two teams of observers, each including at least one expert birder, walk for around 2.5 hours along the site’s trails, cataloging the following details of their observations: bird species, count (# of individuals observed), and location). Metadata, automatically generated by ESRI’s Field Maps app, includes the exact time and date of each observation. Having walked the same surveying paths to best understand the NCOS system and how it’s analyzed, our research group thought of several potential sources of error that may arise during an average survey, one of which being the issue of repeat observations. Understandably, it’s not always easy to distinguish between 2 different individual birds versus the same bird observed earlier and later in the survey. Although there's a “Repeat Observation” column in the Cheadle Center’s dataframe which aims to address this potential source of error, we had to keep in mind that this surveying method isn’t perfect and may contain a small number of errors. 
+
+In order to assess the relationship between bird abundance and water elevation, we required a water elevation dataset. This came in the form of the venoco-water.csv file, whose data is sourced from a YSI brand EXO water quality monitoring system, positioned at 3.4 ft above sea level (NAVD88). Water height is measured every 15 minutes, and is subject to tidal influence based on the open or closed status of the mouth of the slough. The venoco-water.csv dataset contains data only starting on November 13th, 2024, which is why the temporal scope of our project is limited to just water year 2025, minus the month of October and the first half of November. 
+
+To conduct our analysis, we first needed to clean and wrangle the data in a comprehensive manner. Firstly, the birds.csv dataframe was filtered to include only observations within the venoco-water time frame, which was 11-13-2024 through 10-22-2025, and only non-repeat observations. This way, we narrow the bird's dataframe to the time period we are confined to, and dismiss repeat observations as they could potentially skew our results. The water elevation data also required wrangling - some data entries went beyond water year 2025, so more date filtering had to be conducted. In addition, the integer 2.96 was added to each elevation, then multiplied by 0.3048 in order to convert to meters (a more accessible unit for the international scientific community). Next, the water elevations were grouped by date, so that mean elevation per day could be calculated, excluding “N/A” values. It’s important to note that in a slough subject to tidal influence, taking the mean water elevation from a given day can mask the variability of water height within that day. This is one of the limitations of this project that we acknowledge, but it was difficult to find a more appropriate way to group such a large dataset (31,974 observations). With a mean daily water elevation, we could now compare the observation of bird counts on a given day or season with the average water elevation of that day or season. After creating a new dataframe which filtered for just waterfowl species, and another for just shorebird species, we had cleaned dataframes ready to be wrangled for visualization.
 
 
 # Results
 
 First, we explored water elevation and taxonomic abundance as separated variables over time. The first plot shows water elevation through time in the 2025 water year, along with major rain events that significantly spiked water elevation. A limitation for this data is that this water elevation is accurate to local Venoco bridge water elevation, not necessarily the whole wetland.
+
 ```{r}
 #| label: Venoco-water-elevation
 #| fig-height: 4
@@ -388,11 +391,11 @@ ggplot(data = shorebird_waterfowl_25,
   
 ```
 
-Around the February, Waterfowl showed the highest abundance, adapting well to the high water elevation while its counterpart, the Shorebirds, showed a heavy decline in abundance from high water elevation. Shorebirds continued to decline in numbers, showing a record low right before June before rising back up through to August as water elevation continued to decline. 
+Around the February, Waterfowl showed the highest abundance, adapting well to the high water elevation while its counterpart, the Shorebirds, showed a heavy decline in abundance from high water elevation. Shorebirds continued to decline in numbers, showing a record low right before June before rising back up through to August as water elevation continued to decline.
 
 After reaching their record highest abundance in February, Waterfowl began to decline in March, but suddenly shot back up in abundance in June when Shorebird abundance was almost zero. The plot highlights sharp deviation between the two taxonomic groups, revealing how water elevation affects them differently.
 
-After plotting each variable separately, we continued our exploration by creating a scatter plot combining both variables. 
+After plotting each variable separately, we continued our exploration by creating a scatter plot combining both variables.
 
 ```{r}
 #| label: Shorebird-waterfowl-plotting
@@ -540,7 +543,7 @@ shorebird_highlight <- ggplot(mapping = aes(x = observation_date,
 shorebird_highlight
 ```
 
-The same phenomenon occurs with the Shorebirds as the two most abundant species, the Killdeer and Least Sandpiper, follow the negative correlation trend the closes - especially the Killdeer. The remaining 6 Shorebird species did not closely follow this correlation at all. 
+The same phenomenon occurs with the Shorebirds as the two most abundant species, the Killdeer and Least Sandpiper, follow the negative correlation trend the closes - especially the Killdeer. The remaining 6 Shorebird species did not closely follow this correlation at all.
 
 Finally, we combined individual species abundance with water elevation to see how the most abundant species were affected by different water levels.
 
@@ -597,6 +600,5 @@ These final figures display how only the most abundant species display the gener
 In conclusion, our results highlight how the Mallard and Canadian Goose (Waterfowl) are more abundant in water elevations around 2 meters while the Killdeer and Least Sandpiper (Shorebirds) are more abundant in water elevations below 1.4 meters.
 
 # Discussion
-
 
 # References
