@@ -52,3 +52,5 @@ library(cowplot)
 ```
 ## Rendered Output
 The rendered document for our final project pdf is [here](https://github.com/EthanCastelazo/final_193DD_proj/blob/9d7046b60c8d4d7f1d97c4342fcebc861694e13e/code/bird_abundance.pdf)
+
+The rendered document for our final paper pdf is [here](https://github.com/EthanCastelazo/final_193DD_proj/blob/ca3108aa033c9539b03bfa33c128f8e8ea8e389e/final%20paper/Final_Paper.pdf)
