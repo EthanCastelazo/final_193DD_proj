@@ -48,6 +48,10 @@ library(cowplot)
 ├── data
 │   ├── birds.csv     # bird data
 |   └── venoco-water.csv     # water elevation data
+├── final paper
+│   ├── Final_Paper.pdf  
+│   ├── Final_Paper.qmd
+|   └── references.bib
 └── final_193DD_proj.Rproj
 ```
 ## Rendered Output
